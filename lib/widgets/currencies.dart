@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
 List<String> currencyList = [
   'AED',
   'AFN',
@@ -163,3 +167,23 @@ List<String> currencyList = [
   'ZMW',
   'ZWL',
 ];
+
+class CurrencyConversion {
+  late Uri url;
+
+  CurrencyConversion({required this.url});
+
+  Future<double> getCurrency() async {
+    final http.Response response = await http.get(url);
+    late double price;
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      price = data['data']['INR']['value'];
+      print(price);
+    } else {
+      price = 0;
+    }
+
+    return price;
+  }
+}
