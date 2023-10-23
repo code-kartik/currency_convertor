@@ -1,5 +1,6 @@
 import 'package:currency_convertor/widgets/currencies.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,16 +11,25 @@ class HomePage extends StatefulWidget {
 
 late Uri url;
 String CurrencyValue = '';
+bool isLoading = true;
 
 class _HomePageState extends State<HomePage> {
-  Future<String> setCurrencyValue() async {
+  Future<void> setCurrencyValue() async {
     String currencyUrl =
         "https://api.currencyapi.com/v3/latest?apikey=cur_live_uqA272u3mMpTKHc86D1wtmDnLRxtRdTvXr01US9a";
     url = Uri.parse(currencyUrl);
-    double currencyData = await CurrencyConversion(url: url).getCurrency();
+    try {
+      double currencyData = await CurrencyConversion(url: url).getCurrency();
+      String newCurrencyValue = currencyData.toStringAsFixed(2);
 
-    CurrencyValue = currencyData.toStringAsFixed(2);
-    return CurrencyValue;
+      setState(() {
+        CurrencyValue = newCurrencyValue;
+        isLoading = false;
+      });
+    } on Exception {
+      isLoading = false;
+      rethrow;
+    }
   }
 
   @override
@@ -75,10 +85,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      CurrencyValue,
-                      style: const TextStyle(fontSize: 36, color: Colors.black),
-                    ),
+                    child: isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Text(
+                            CurrencyValue,
+                            style: const TextStyle(
+                                fontSize: 36, color: Colors.black),
+                          ),
                   ),
                 ],
               ),
