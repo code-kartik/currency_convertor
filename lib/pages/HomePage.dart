@@ -11,6 +11,8 @@ class HomePage extends StatefulWidget {
 
 late Uri url;
 String CurrencyValue = '';
+String currencyInUSD = '';
+double currencyInINR = 0;
 bool isLoading = true;
 
 class _HomePageState extends State<HomePage> {
@@ -33,69 +35,75 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    setCurrencyValue();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xffedf2f4),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    leading: Text(
-                      "🇺🇸",
-                      style: TextStyle(fontSize: 24),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const ListTile(
+                      leading: Text(
+                        "🇺🇸",
+                        style: TextStyle(fontSize: 24),
+                      ),
+                      title: Text('USD'),
+                      subtitle: Text('United States Dollar'),
                     ),
-                    title: Text('USD'),
-                    subtitle: Text('United States Dollar'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      '1.00',
-                      style: TextStyle(fontSize: 36),
+                    Expanded(
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        controller: TextEditingController(),
+                        decoration: InputDecoration(
+                          hintText: "Enter the amount...",
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            onPressed: () => TextEditingController().clear(),
+                            icon: const Icon(Icons.clear),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(
               height: 2.0,
             ),
-            Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const ListTile(
-                    leading: Text(
-                      "🇮🇳",
-                      style: TextStyle(fontSize: 24),
+            Expanded(
+              child: Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const ListTile(
+                      leading: Text(
+                        "🇮🇳",
+                        style: TextStyle(fontSize: 24),
+                      ),
+                      title: Text('INR'),
+                      subtitle: Text('Indian Rupees'),
                     ),
-                    title: Text('INR'),
-                    subtitle: Text('Indian Rupees'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : Text(
-                            CurrencyValue,
-                            style: const TextStyle(
-                                fontSize: 36, color: Colors.black),
-                          ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : Text(
+                              currencyInINR.toString(),
+                              style: const TextStyle(
+                                  fontSize: 36, color: Colors.black),
+                            ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
