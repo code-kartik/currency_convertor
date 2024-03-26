@@ -1,6 +1,6 @@
-import 'package:currency_convertor/widgets/currencies.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:currency_convertor/widgets/currencies.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,31 +9,38 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-late Uri url;
-String CurrencyValue = '';
-final textController = TextEditingController();
-
-double currencyInUSD = double.parse(textController.text);
-late double currencyInINR;
-
-bool isLoading = true;
-
 class _HomePageState extends State<HomePage> {
+  Uri? url;
+  String? currencyValue;
+  final textController = TextEditingController();
+
+  double? currencyInUSD;
+  double? currencyInINR;
+  bool isLoading = false;
+
   Future<void> setCurrencyValue() async {
-    String currencyUrl =
-        "https://api.currencyapi.com/v3/latest?apikey=cur_live_uqA272u3mMpTKHc86D1wtmDnLRxtRdTvXr01US9a";
-    url = Uri.parse(currencyUrl);
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      double currencyData = await CurrencyConversion(url: url).getCurrency();
+      currencyInUSD = double.parse(textController.text);
+
+      String currencyUrl =
+          "https://api.currencyapi.com/v3/latest?apikey=cur_live_uqA272u3mMpTKHc86D1wtmDnLRxtRdTvXr01US9a";
+      url = Uri.parse(currencyUrl);
+
+      double currencyData = await CurrencyConversion(url: url!).getCurrency();
       String newCurrencyValue = currencyData.toStringAsFixed(2);
 
       setState(() {
-        currencyInINR = currencyInUSD * double.parse(newCurrencyValue);
-        //CurrencyValue = newCurrencyValue;
+        currencyInINR = currencyInUSD! * double.parse(newCurrencyValue);
         isLoading = false;
       });
-    } on Exception {
-      isLoading = false;
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       rethrow;
     }
   }
@@ -65,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                             hintText: "Enter the amount...",
                             border: const OutlineInputBorder(),
                             suffixIcon: IconButton(
-                              onPressed: () => TextEditingController().clear(),
+                              onPressed: () => textController.clear(),
                               icon: const Icon(Icons.clear),
                             ),
                           ),
